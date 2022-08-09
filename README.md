@@ -1,9 +1,9 @@
 # Todo-App
 This is a todo app i made using reactjs , json server, and chakra UI\
 Documentations\
-1.https://reactjs.org/\
-2.https://github.com/typicode/json-server\
-3.https://chakra-ui.com/\
+1.https://reactjs.org/ \
+2.https://github.com/typicode/json-server \
+3.https://chakra-ui.com/ \
 
 # Getting Started with vite App
 
