@@ -19,8 +19,6 @@ export default function Todo() {
     getTodos();
   }, [sortBy, page]);
   const getTodos = () => {
-   
-    
     axios
       .get(
         `https://obscure-taiga-80364.herokuapp.com/data?_sort=title&_order=${sortBy}&_page=${page}&_limit=3`
