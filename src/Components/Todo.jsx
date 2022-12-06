@@ -72,9 +72,9 @@ export default function Todo() {
     </Box>
   ) : (
     <>
-      <Flex gap={"3"} align={"center"} direction={"column"}>
+      <Flex className={styles.bg} gap={"3"} align={"center"} direction={"column"}>
         <Heading
-          // className={styles.ip}
+     
 
           color={"white"}
           size={"2xl"}
