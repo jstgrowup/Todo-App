@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import AddTodo from "./AddTodo";
 import Pagination from "./Pagination";
 import TodoList from "./TodoList";
+import styles from "./Todo.module.css";
+console.log("styles:", styles);
 // adding
 // toggle
 // delete
@@ -21,7 +23,7 @@ export default function Todo() {
   const getTodos = () => {
     axios
       .get(
-        `https://obscure-taiga-80364.herokuapp.com/data?_sort=title&_order=${sortBy}&_page=${page}&_limit=3`
+        `https://todobe.onrender.com/data?_sort=title&_order=${sortBy}&_page=${page}&_limit=3`
       )
       .then((res) => setTodos(res.data))
       .catch((err) => alert(err))
@@ -30,7 +32,7 @@ export default function Todo() {
   const AddTodos = (todo) => {
     setLoading(true);
     axios
-      .post(`https://obscure-taiga-80364.herokuapp.com/data`, todo)
+      .post(`https://todobe.onrender.com/data`, todo)
       .then((res) => getTodos())
       .catch((err) => alert(err))
       .finally(() => setLoading(false));
@@ -42,12 +44,10 @@ export default function Todo() {
       status: false,
     };
     AddTodos(item);
-
-    // console.log(todo);
   };
   const handleToggle = (id, status) => {
     axios
-      .patch(`https://obscure-taiga-80364.herokuapp.com/data/${id}`, {
+      .patch(`https://todobe.onrender.com/data/${id}`, {
         status: !status,
       })
       .then((res) => getTodos())
@@ -55,15 +55,14 @@ export default function Todo() {
   };
   const handleDelete = (id) => {
     axios
-      .delete(`https://obscure-taiga-80364.herokuapp.com/data/${id}`)
+      .delete(`https://todobe.onrender.com/data/${id}`)
       .then((res) => getTodos())
       .catch((err) => console.log(err));
   };
   const handleSort = () => {
     updateSort(sortBy === "ASC" ? "DESC" : "ASC");
-   
   };
-  // console.log(todo);
+
   return loading ? (
     <Box p={"200px"} ml={"500px"}>
       <Image
@@ -73,21 +72,45 @@ export default function Todo() {
     </Box>
   ) : (
     <>
-      <Heading size={"2xl"} ml={"600px"}>
-        TODO APP
-      </Heading>
-      <Box mr={"300px"} ml={"500px"} mt={"100px"}>
-        <AddTodo handleAdd={handleAdd} />
+      <Flex gap={"3"} align={"center"} direction={"column"}>
+        <Heading
+          // className={styles.ip}
 
-        <Button onClick={handleSort} mb="20px" colorScheme="blue">
-          {sortBy === "ASC" ? "SHOW ASCENDING" : "SHOW DESCENDING"}
-        </Button>
-        <Heading size={"lg"} mb="20px">
-          Pending
+          color={"white"}
+          size={"2xl"}
+        >
+          TODO APP
         </Heading>
-        <Box>
+        <Flex direction={"column"} align={"center"} gap={"3"} color={"white"}>
+          <AddTodo handleAdd={handleAdd} />
+
+          <Button onClick={handleSort}  colorScheme="whatsapp">
+            {sortBy === "ASC" ? "SHOW ASCENDING" : "SHOW DESCENDING"}
+          </Button>
+          <Heading size={"lg"}>
+            Pending
+          </Heading>
+          <Flex direction={"column"} gap={"4"} w={"100%"}>
+            {todo
+              .filter((el) => !el.status)
+              .map((el) => (
+                <TodoList
+                  title={el.title}
+                  status={el.status}
+                  key={el.id}
+                  id={el.id}
+                  handleToggle={handleToggle}
+                  handleDelete={handleDelete}
+                />
+              ))}
+          </Flex>
+
+          <Heading size={"lg"} mb="20px">
+            Completed
+          </Heading>
+
           {todo
-            .filter((el) => !el.status)
+            .filter((el) => el.status)
             .map((el) => (
               <TodoList
                 title={el.title}
@@ -98,51 +121,34 @@ export default function Todo() {
                 handleDelete={handleDelete}
               />
             ))}
-        </Box>
+          <Center>
+            <Flex align={"center"} gap={"6"} mb="20px">
+              <Button
+                colorScheme="whatsapp"
+                disabled={page === 1}
+                onClick={() => setPage((prev) => prev - 1)}
+              >
+                PREV
+              </Button>
+              <Heading size={"md"}>{page}</Heading>
+              <Button
+                colorScheme="whatsapp"
+                onClick={() => setPage((prev) => prev + 1)}
+              >
+                NEXT
+              </Button>
+            </Flex>
+          </Center>
 
-        <Heading size={"lg"} mb="20px">
-          Completed
-        </Heading>
-
-        {todo
-          .filter((el) => el.status)
-          .map((el) => (
-            <TodoList
-              title={el.title}
-              status={el.status}
-              key={el.id}
-              id={el.id}
-              handleToggle={handleToggle}
-              handleDelete={handleDelete}
+          <Box>
+            <Pagination
+              total={10}
+              current={page}
+              onchange={(value) => setPage(value)}
             />
-          ))}
-        <Center>
-          <Flex align={"center"} gap={"6"} mb="20px">
-            <Button
-              colorScheme="teal"
-              disabled={page === 1}
-              onClick={() => setPage((prev) => prev - 1)}
-            >
-              PREV
-            </Button>
-            <Heading size={"md"}>{page}</Heading>
-            <Button
-              colorScheme="teal"
-              onClick={() => setPage((prev) => prev + 1)}
-            >
-              NEXT
-            </Button>
-          </Flex>
-        </Center>
-
-        <Box>
-          <Pagination
-            total={10}
-            current={page}
-            onchange={(value) => setPage(value)}
-          />
-        </Box>
-      </Box>
+          </Box>
+        </Flex>
+      </Flex>
     </>
   );
 }
